@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BANTAY Wiki — Philippine Mythology Codex</title>
+<style>
+  :root {
+    --bg: #070b12;
+    --bg-soft: #0e1624;
+    --card: #121c2d;
+    --gold: #f5c542;
+    --amber: #f97316;
+    --crimson: #ef4444;
+    --jade: #2ecc71;
+    --sky: #38bdf8;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --border: rgba(245, 197, 66, 0.25);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: radial-gradient(circle at top right, #16243a, var(--bg) 55%);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+  }
+
+  /* Sidebar */
+  aside {
+    width: 260px; flex-shrink: 0;
+    background: rgba(10, 15, 25, 0.94);
+    border-right: 1px solid var(--border);
+    padding: 22px 18px;
+    position: sticky; top: 0; height: 100vh; overflow-y: auto;
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .brand {
+    font-size: 24px; font-weight: 900; letter-spacing: 3px; color: var(--gold);
+    text-shadow: 0 0 18px rgba(245,197,66,0.3);
+  }
+  .brand-sub { font-size: 11px; color: var(--muted); letter-spacing: 1px; margin-top: -10px; }
+  .play-link {
+    display: block; text-align: center; text-decoration: none;
+    background: linear-gradient(135deg, var(--gold), #e67e22);
+    color: #111; font-weight: 800; font-size: 13px; letter-spacing: 0.8px;
+    padding: 10px 14px; border-radius: 10px;
+    transition: transform 0.12s, box-shadow 0.12s;
+  }
+  .play-link:hover { transform: translateY(-1px); box-shadow: 0 4px 18px rgba(245,197,66,0.35); }
+  #searchInput {
+    width: 100%; padding: 9px 12px; border-radius: 8px;
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14);
+    color: #fff; font-size: 13px; outline: none;
+  }
+  #searchInput:focus { border-color: var(--gold); }
+  nav { display: flex; flex-direction: column; gap: 4px; }
+  nav a {
+    text-decoration: none; color: var(--text); font-size: 14px; font-weight: 600;
+    padding: 8px 12px; border-radius: 8px; transition: background 0.12s, color 0.12s;
+  }
+  nav a:hover { background: rgba(245,197,66,0.12); color: var(--gold); }
+  .side-note {
+    margin-top: auto; font-size: 11px; color: var(--muted);
+    border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px;
+  }
+
+  /* Main Content */
+  main {
+    flex: 1; padding: 32px clamp(18px, 4vw, 52px); max-width: 1120px; margin: 0 auto;
+  }
+  header.hero {
+    background: linear-gradient(135deg, rgba(245,197,66,0.12), rgba(56,189,248,0.06));
+    border: 1px solid var(--border); border-radius: 16px;
+    padding: 26px 28px; margin-bottom: 30px;
+  }
+  header.hero h1 { font-size: 32px; color: var(--gold); letter-spacing: 2px; }
+  header.hero p { color: #cbd5e1; margin-top: 8px; max-width: 740px; }
+  .pill-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .pill {
+    font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 99px;
+    background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); color: #f8fafc;
+  }
+
+  section { margin-bottom: 42px; }
+  h2 {
+    font-size: 22px; color: var(--gold); letter-spacing: 1px;
+    border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 18px;
+  }
+
+  /* Grids & Cards */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(295px, 1fr)); gap: 16px; }
+  .card {
+    background: var(--card); border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 14px; padding: 18px;
+    display: flex; flex-direction: column; gap: 10px;
+    transition: border-color 0.15s, transform 0.15s;
+  }
+  .card:hover { border-color: var(--gold); transform: translateY(-2px); }
+  .card-head { display: flex; align-items: center; gap: 14px; }
+  .portrait {
+    width: 68px; height: 68px; border-radius: 12px; flex-shrink: 0;
+    background: #090f19; border: 1px solid rgba(255,255,255,0.12);
+  }
+  .card h3 { font-size: 17px; color: #fff; }
+  .tag { font-size: 11px; font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: 0.6px; }
+  .boss-tag { color: #ff7675; }
+  .stats {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px;
+    background: rgba(0,0,0,0.28); padding: 9px 10px; border-radius: 9px; font-size: 12px;
+  }
+  .stats span { color: var(--muted); }
+  .stats b { color: #f8fafc; }
+  .lore-note { font-size: 13px; color: #cbd5e1; }
+  .tip {
+    font-size: 12px; color: #fde68a; background: rgba(245,197,66,0.08);
+    border-left: 3px solid var(--gold); padding: 7px 10px; border-radius: 0 8px 8px 0;
+  }
+
+  /* Stage Swatch */
+  .swatch-bar { height: 10px; border-radius: 6px; margin-bottom: 4px; }
+
+  /* Tables */
+  table {
+    width: 100%; border-collapse: collapse; background: var(--card);
+    border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.09);
+  }
+  th, td { text-align: left; padding: 11px 14px; border-bottom: 1px solid rgba(255,255,255,0.07); font-size: 13px; }
+  th { background: rgba(245,197,66,0.1); color: var(--gold); font-weight: 800; }
+  tr:last-child td { border-bottom: none; }
+  .kbd {
+    display: inline-block; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+    padding: 1px 6px; border-radius: 4px; font-weight: 700; font-size: 11px; color: #fff;
+  }
+  .hidden { display: none !important; }
+
+  @media (max-width: 820px) {
+    body { flex-direction: column; }
+    aside { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--border); }
+    nav { flex-direction: row; flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+
+<aside>
+  <div class="brand">BANTAY</div>
+  <div class="brand-sub">ALAMAT NG GABI — WIKI</div>
+  <a class="play-link" href="index.html">⚔ PLAY GAME</a>
+  <input type="text" id="searchInput" placeholder="Search weapons, foes, stages...">
+  <nav>
+    <a href="#overview">Overview &amp; Controls</a>
+    <a href="#weapons">5 Ancestral Weapons</a>
+    <a href="#bestiary">Mythical Bestiary</a>
+    <a href="#stages">5 Rotating Stages</a>
+    <a href="#blessings">Diwata Blessings</a>
+    <a href="#glossary">Folklore Glossary</a>
+  </nav>
+  <div class="side-note">
+    100% Zero-Asset Codex.<br>
+    All portraits are procedurally drawn on HTML5 Canvas.
+  </div>
+</aside>
+
+<main>
+  <header class="hero" id="overview">
+    <h1>BANTAY: ALAMAT NG GABI — CODEX</h1>
+    <p>
+      Welcome to the official companion wiki for <b>BANTAY</b>, a zero-asset browser action game rooted in
+      <b>Philippine mythology</b> and <b>Filipino martial arts</b>. Defend the barangay through rotating moonlit stages
+      using five traditional weapons against waves of nocturnal creatures and the moon-devouring <b>Bakunawa</b>.
+    </p>
+    <div class="pill-row">
+      <span class="pill">5 Weapons</span>
+      <span class="pill">6 Mythical Creatures</span>
+      <span class="pill">5 Rotating Stages</span>
+      <span class="pill">6 Diwata Blessings</span>
+      <span class="pill">Zero External Assets</span>
+    </div>
+  </header>
+
+  <!-- Controls & Mechanics -->
+  <section>
+    <h2>Controls &amp; Core Mechanics</h2>
+    <table>
+      <thead>
+        <tr><th>Control</th><th>Action</th><th>Combat Note</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><span class="kbd">W</span> <span class="kbd">A</span> <span class="kbd">S</span> <span class="kbd">D</span> / Arrows</td><td>Move</td><td>Movement slows slightly while raising the Kalasag Shield guard.</td></tr>
+        <tr><td><span class="kbd">Mouse</span> + <span class="kbd">Left Click</span></td><td>Aim &amp; Attack</td><td>Hold with Slingshot to charge piercing shots; hold with Shield to block &amp; reflect.</td></tr>
+        <tr><td><span class="kbd">1</span>–<span class="kbd">5</span> / <span class="kbd">Q</span> <span class="kbd">E</span> / Scroll</td><td>Switch Weapon</td><td>Instant switching lets you stun with 1 Stick or reflect with Shield mid-fight.</td></tr>
+        <tr><td><span class="kbd">Space</span> / <span class="kbd">Shift</span></td><td>Dodge Dash</td><td>Costs 28 Stamina and grants brief invulnerability frames (i-frames).</td></tr>
+        <tr><td><span class="kbd">P</span> / <span class="kbd">Esc</span> &amp; <span class="kbd">M</span></td><td>Pause &amp; Mute</td><td>Toggle synthesized Web Audio SFX at any time.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Weapons -->
+  <section id="weapons">
+    <h2>The 5 Ancestral Weapons</h2>
+    <div class="grid" id="weaponsGrid">
+
+      <article class="card searchable" data-search="arnis doblete dual sticks rattan fast combo melee">
+        <div class="card-head">
+          <canvas class="portrait" width="68" height="68" data-draw="w0"></canvas>
+          <div>
+            <div class="tag">Slot 1 • Doblete</div>
+            <h3>Arnis (Dual Sticks)</h3>
+          </div>
+        </div>
+        <div class="stats">
+          <div><span>Damage:</span> <b>15 (22 finisher)</b></div>
+          <div><span>Cooldown:</span> <b>0.17s</b></div>
+          <div><span>Range:</span> <b>64–76 px</b></div>
+          <div><span>Stun:</span> <b>0.08s</b></div>
+        </div>
+        <p class="lore-note">Twin rattan fighting sticks used in rapid alternating strikes. Every 3rd hit executes a forward-lunging finisher for 1.45× damage.</p>
+        <div class="tip">Tip: Best for building high Combo multipliers and shredding packs of Tiyanak.</div>
+      </article>
+
+      <article class="card searchable" data-search="slingshot tirador ranged projectile charge pierce stone">
+        <div class="card-head">
+          <canvas class="portrait" width="68" height="68" data-draw="w1"></canvas>
+          <div>
+            <div class="tag">Slot 2 • Tirador</div>
+            <h3>Slingshot</h3>
+          </div>
+        </div>
+        <div class="stats">
+          <div><span>Damage:</span> <b>22 (42 charged)</b></div>
+          <div><span>Cooldown:</span> <b>0.34s</b></div>
+          <div><span>Range:</span> <b>480 px</b></div>
+          <div><span>Pierce:</span> <b>1 (3 charged)</b></div>
+        </div>
+        <p class="lore-note">Traditional carved wooden Y-frame slingshot launching blessed stones. Hold Left Click for 0.42s to charge a glowing piercing critical shot.</p>
+        <div class="tip">Tip: Ideal for picking off airborne Manananggal and kiting Kapre from safety.</div>
+      </article>
+
+      <article class="card searchable" data-search="staff tungkod sweep wind hangin shockwave crowd control">
+        <div class="card-head">
+          <canvas class="portrait" width="68" height="68" data-draw="w2"></canvas>
+          <div>
+            <div class="tag">Slot 3 • Tungkod</div>
+            <h3>Staff</h3>
+          </div>
+        </div>
+        <div class="stats">
+          <div><span>Damage:</span> <b>26 (35 wave)</b></div>
+          <div><span>Cooldown:</span> <b>0.42s</b></div>
+          <div><span>Range:</span> <b>105–127 px</b></div>
+          <div><span>Knockback:</span> <b>220–297</b></div>
+        </div>
+        <p class="lore-note">Long ceremonial hardwood staff with jade ferrule. Sweeps a wide arc and unleashes a 360° <b>Hangin!</b> wind shockwave on every 3rd attack.</p>
+        <div class="tip">Tip: Use when surrounded to push entire waves back and create breathing room.</div>
+      </article>
+
+      <article class="card searchable" data-search="shield kalasag block guard parry reflect bash knockback">
+        <div class="card-head">
+          <canvas class="portrait" width="68" height="68" data-draw="w3"></canvas>
+          <div>
+            <div class="tag">Slot 4 • Kalasag</div>
+            <h3>Shield</h3>
+          </div>
+        </div>
+        <div class="stats">
+          <div><span>Bash Dmg:</span> <b>20</b></div>
+          <div><span>Reflect Dmg:</span> <b>2.2× incoming</b></div>
+          <div><span>Knockback:</span> <b>340</b></div>
+          <div><span>Stun:</span> <b>0.75s</b></div>
+        </div>
+        <p class="lore-note">Carved wooden Filipino war shield. Hold click to raise a directional ward that blocks hits and <b>reflects projectiles</b> back at enemies; tap click to Shield Bash.</p>
+        <div class="tip">Tip: Reflecting Bakunawa's lunar orbs or Kapre's embers deals huge burst damage!</div>
+      </article>
+
+      <article class="card searchable" data-search="1 stick solo baston kamagong heavy stun crit">
+        <div class="card-head">
+          <canvas class="portrait" width="68" height="68" data-draw="w4"></canvas>
+          <div>
+            <div class="tag">Slot 5 • Solo Baston</div>
+            <h3>1 Stick (Kamagong)</h3>
+          </div>
+        </div>
+        <div class="stats">
+          <div><span>Damage:</span> <b>38 (55 vs stunned)</b></div>
+          <div><span>Cooldown:</span> <b>0.46s</b></div>
+          <div><span>Range:</span> <b>76 px</b></div>
+          <div><span>Stun:</span> <b>1.15s</b></div>
+        </div>
+        <p class="lore-note">Single dense ironwood fighting stick built for punishing overhead strikes. Inflicts the longest stun in the arsenal and deals +45% guaranteed critical damage to stunned foes.</p>
+        <div class="tip">Tip: Interrupt charging Tikbalang or chain stuns after a Shield Bash.</div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- Bestiary -->
+  <section id="bestiary">
+    <h2>Mythical Bestiary</h2>
+    <div class="grid">
+
+      <article class="card searchable" data-search="tiyanak swarmer fast imp enemy">
+        <div class="card-head">
+          <canvas class="portrait" width="68" height="68" data-draw="e_tiyanak"></canvas>
+          <div>
+            <div class="tag">Wave 1+ • Swarmer</div>
+            <h3>Tiyanak</h3>
+          </div>
+        </div>
+        <div class="stats">
+          <div><span>Base HP:</span> <b>34</b></div>
+          <div><span>Speed:</span> <b>150</b></div>
+          <div><span>Damage:</span> <b>10</b></div>
+          <div><span>Score:</span> <b>60</b></div>
+        </div>
+        <p class="lore-note">Feral nocturnal creatures from Philippine folklore known for luring travelers into the forest. Fast and relentless in packs.</p>
+        <div class="tip">Counter: Sweep packs away with Staff or melt them with Arnis combos.</div>
+      </article>
+
+      <article class="card searchable" data-search="aswang stalker claws shadow enemy">
+        <div class="card-head">
+          <canvas class="portrait" width="68" height="68" data-draw="e_aswang"></canvas>
+          <div>
+            <div class="tag">Wave 1+ • Stalker</div>
+            <h3>Aswang</h3>
+          </div>
+        </div>
+        <div class="stats">
+          <div><span>Base HP:</span> <b>65</b></div>
+          <div><span>Speed:</span> <b>122</b></div>
+          <div><span>Damage:</span> <b>16</b></div>
+          <div><span>Score:</span> <b>120</b></div>
+        </div>
+        <p class="lore-note">Shapeshifting night predator feared across Visayan and Tagalog legends. Approaches relentlessly with outstretched razor claws.</p>
+        <div class="tip">Counter: Stun-lock with 1 Stick or outrange with charged Slingshot pellets.</div>
+      </article>
+
+      <article class="card searchable" data-search="manananggal flyer wings ranged bolt enemy">
+        <div class="card-head">
+          <canvas class="portrait" width="68" height="68" data-draw="e_manananggal"></canvas>
+          <div>
+            <div class="tag">Wave 2+ • Ranged Flyer</div>
+            <h3>Manananggal</h3>
+          </div>
+        </div>
+        <div class="stats">
+          <div><span>Base HP:</span> <b>55</b></div>
+          <div><span>Speed:</span> <b>95</b></div>
+          <div><span>Damage:</span> <b>14</b></div>
+          <div><span>Score:</span> <b>150</b></div>
+        </div>
+        <p class="lore-note">A severed upper-torso creature with massive bat wings that hovers at mid-range and spits crimson cursed bolts.</p>
+        <div class="tip">Counter: Snipe with Slingshot or reflect its bolts right back with Kalasag Shield.</div>
+      </article>
+
+      <article class="card searchable" data-search="tikbalang horse charger spirit enemy">
+        <div class="card-head">
+          <canvas class="portrait" width="68" height="68" data-draw="e_tikbalang"></canvas>
+          <div>
+            <div class="tag">Wave 3+ • Charger</div>
+            <h3>Tikbalang</h3>
+          </div>
+        </div>
+        <div class="stats">
+          <div><span>Base HP:</span> <b>115</b></div>
+          <div><span>Speed:</span> <b>105 (440 charge)</b></div>
+          <div><span>Damage:</span> <b>22</b></div>
+          <div><span>Score:</span> <b>220</b></div>
+        </div>
+        <p class="lore-note">Tall horse-headed forest spirit with a fiery mane. Pauses briefly with a dashed telegraph line before charging rapidly across the arena.</p>
+        <div class="tip">Counter: Sidestep with Spacebar dash, or stop its windup cold with 1 Stick.</div>
+      </article>
+
+      <article class="card searchable" data-search="kapre giant brute tree cigar fire ember enemy">
+        <div class="card-head">
+          <canvas class="portrait" width="68" height="68" data-draw="e_kapre"></canvas>
+          <div>
+            <div class="tag">Wave 4+ • Brute</div>
+            <h3>Kapre</h3>
+          </div>
+        </div>
+        <div class="stats">
+          <div><span>Base HP:</span> <b>180</b></div>
+          <div><span>Speed:</span> <b>68</b></div>
+          <div><span>Damage:</span> <b>26 (16 ember)</b></div>
+          <div><span>Score:</span> <b>300</b></div>
+        </div>
+        <p class="lore-note">Hulking dark tree giant that dwells in balete and acacia trees, smoking a massive cigar and hurling 3-way fiery ember volleys.</p>
+        <div class="tip">Counter: High knockback resistance — reflect its 3-way embers with Shield!</div>
+      </article>
+
+      <article class="card searchable" data-search="bakunawa boss serpent dragon moon eclipse laho">
+        <div class="card-head">
+          <canvas class="portrait" width="68" height="68" data-draw="e_bakunawa"></canvas>
+          <div>
+            <div class="tag boss-tag">Every 5th Wave • Boss</div>
+            <h3>Bakunawa</h3>
+          </div>
+        </div>
+        <div class="stats">
+          <div><span>Base HP:</span> <b>850 (scales/wave)</b></div>
+          <div><span>Speed:</span> <b>115</b></div>
+          <div><span>Damage:</span> <b>28 (18 orb)</b></div>
+          <div><span>Score:</span> <b>1,500 + 30 HP Heal</b></div>
+        </div>
+        <p class="lore-note">The giant moon-eating sea serpent of Visayan and Bicolano mythology. Its arrival triggers an eclipse (<i>Laho</i>) and unleashes 8-way radial lunar orb rings.</p>
+        <div class="tip">Counter: Reflect lunar orbs with Kalasag Shield, then rush in with Arnis or 1 Stick.</div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- Stages -->
+  <section id="stages">
+    <h2>The 5 Rotating Stages</h2>
+    <div class="grid">
+      <article class="card searchable" data-search="stage 1 kagubatan kawayan bamboo grove forest">
+        <div class="swatch-bar" style="background:linear-gradient(90deg,#050c0a,#152922,#22c55e)"></div>
+        <div class="tag">Waves 1, 6, 11...</div>
+        <h3>Kagubatan ng Kawayan</h3>
+        <p class="lore-note"><b>Moonlit Bamboo Grove.</b> Mossy forest floor surrounded by swaying bamboo clusters and glowing golden <i>alitaptap</i> (fireflies).</p>
+      </article>
+      <article class="card searchable" data-search="stage 2 barangay tabing ilog riverside village torches sulo">
+        <div class="swatch-bar" style="background:linear-gradient(90deg,#0c0908,#2a1f18,#fb923c)"></div>
+        <div class="tag">Waves 2, 7, 12...</div>
+        <h3>Barangay sa Tabing-Ilog</h3>
+        <p class="lore-note"><b>Torchlit Riverside Village.</b> Packed earth courtyard bordered by a flowing moonlit river and four flickering bamboo torches (<i>sulo</i>).</p>
+      </article>
+      <article class="card searchable" data-search="stage 3 lumang sementeryo ruins mist cobblestones">
+        <div class="swatch-bar" style="background:linear-gradient(90deg,#09080f,#1e1b2e,#c084fc)"></div>
+        <div class="tag">Waves 3, 8, 13...</div>
+        <h3>Lumang Sementeryo</h3>
+        <p class="lore-note"><b>Misty Ancient Ruins.</b> Weathered stone flagstones, mossy pillars, pale violet moonlight, and drifting spectral mist.</p>
+      </article>
+      <article class="card searchable" data-search="stage 4 tuktok bundok mountain shrine sun braziers">
+        <div class="swatch-bar" style="background:linear-gradient(90deg,#070b12,#1a2333,#f5c542)"></div>
+        <div class="tag">Waves 4, 9, 14...</div>
+        <h3>Tuktok ng Bundok</h3>
+        <p class="lore-note"><b>Sacred Mountain Shrine.</b> High basalt terrace featuring an etched 8-ray Philippine sun motif and four glowing cyan spirit braziers.</p>
+      </article>
+      <article class="card searchable" data-search="stage 5 lawa bakunawa blood moon eclipse lake boss">
+        <div class="swatch-bar" style="background:linear-gradient(90deg,#07040a,#241226,#ef4444)"></div>
+        <div class="tag boss-tag">Waves 5, 10, 15... (Boss Arena)</div>
+        <h3>Lawa ng Bakunawa</h3>
+        <p class="lore-note"><b>Blood-Moon Eclipse Lake.</b> Dark reflective water with expanding crimson ripples, obsidian shore boulders, and an eclipsed blood moon.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- Diwata Blessings -->
+  <section id="blessings">
+    <h2>Diwata Blessings (Upgrades)</h2>
+    <div class="grid">
+      <article class="card searchable" data-search="asin bawang damage blessing upgrade">
+        <div class="tag">🔥 Offense</div><h3>Asin at Bawang</h3>
+        <p class="lore-note"><b>+18% damage</b> across all 5 weapons. Inspired by traditional Filipino folk charms used to ward off nocturnal creatures.</p>
+      </article>
+      <article class="card searchable" data-search="bilis hangin speed stamina blessing upgrade">
+        <div class="tag">🍃 Mobility</div><h3>Bilis ng Hangin</h3>
+        <p class="lore-note"><b>+14% movement speed</b> and faster stamina recovery — great for frequent dodging and sustained Kalasag blocking.</p>
+      </article>
+      <article class="card searchable" data-search="biyaya bathala health hp heal blessing upgrade">
+        <div class="tag">💚 Vitality</div><h3>Biyaya ni Bathala</h3>
+        <p class="lore-note"><b>+25 Max HP</b> and immediately restores <b>45 HP</b>. Essential before Wave 5 Bakunawa encounters.</p>
+      </article>
+      <article class="card searchable" data-search="kamay kidlat attack speed blessing upgrade">
+        <div class="tag">⚡ Tempo</div><h3>Kamay ng Kidlat</h3>
+        <p class="lore-note"><b>+15% attack speed</b> for every weapon. Turns Arnis into a blur and lets Staff trigger wind waves much faster.</p>
+      </article>
+      <article class="card searchable" data-search="lakas buwan crit critical chance blessing upgrade">
+        <div class="tag">🌙 Precision</div><h3>Lakas ng Buwan</h3>
+        <p class="lore-note"><b>+15% Critical Hit chance</b> (1.85× damage). Stacks nicely with high-hit-rate Arnis or charged Slingshot shots.</p>
+      </article>
+      <article class="card searchable" data-search="matibay kalasag shield reflect stun blessing upgrade">
+        <div class="tag">🛡 Defense &amp; Control</div><h3>Matibay na Kalasag</h3>
+        <p class="lore-note"><b>+30% Shield reflect damage</b> and <b>+25% stun duration</b> — supercharges both Shield and 1 Stick builds.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- Glossary -->
+  <section id="glossary">
+    <h2>Philippine Folklore &amp; Martial Arts Glossary</h2>
+    <table>
+      <thead>
+        <tr><th>Term</th><th>Meaning &amp; Cultural Origin</th></tr>
+      </thead>
+      <tbody>
+        <tr class="searchable" data-search="bantay guardian glossary"><td><b>Bantay</b></td><td>Tagalog for "guardian" or "watchman" — the protector of the barangay.</td></tr>
+        <tr class="searchable" data-search="mandirigma warrior glossary"><td><b>Mandirigma</b></td><td>Traditional Filipino term for a warrior.</td></tr>
+        <tr class="searchable" data-search="putong headband red glossary"><td><b>Putong</b></td><td>Traditional cloth headband worn by pre-colonial warriors; red signified bravery in battle.</td></tr>
+        <tr class="searchable" data-search="doblete solo baston arnis eskrima kali glossary"><td><b>Doblete / Solo Baston</b></td><td>Filipino Martial Arts (Arnis/Eskrima/Kali) terms for double-stick and single-stick combat styles.</td></tr>
+        <tr class="searchable" data-search="kalasag shield glossary"><td><b>Kalasag</b></td><td>Traditional carved wooden war shield used across indigenous Philippine warrior cultures.</td></tr>
+        <tr class="searchable" data-search="tirador tungkod glossary"><td><b>Tirador / Tungkod</b></td><td>Filipino terms for a wooden slingshot (<i>tirador</i>) and hardwood walking/fighting staff (<i>tungkod</i>).</td></tr>
+        <tr class="searchable" data-search="bathala diwata glossary"><td><b>Bathala / Diwata</b></td><td><i>Bathala</i> is the supreme deity in Tagalog mythology; <i>Diwata</i> are benevolent nature and guardian spirits.</td></tr>
+        <tr class="searchable" data-search="laho eclipse bakunawa glossary"><td><b>Laho</b></td><td>Traditional term for a lunar eclipse, attributed in folklore to the Bakunawa swallowing the moon.</td></tr>
+      </tbody>
+    </table>
+  </section>
+</main>
+
+<script>
+(() => {
+  'use strict';
+
+  // Live Instant Search
+  const searchInput = document.getElementById('searchInput');
+  const items = document.querySelectorAll('.searchable');
+  searchInput.addEventListener('input', () => {
+    const q = searchInput.value.trim().toLowerCase();
+    items.forEach(el => {
+      const hay = (el.dataset.search + ' ' + el.textContent).toLowerCase();
+      el.classList.toggle('hidden', q.length > 0 && !hay.includes(q));
+    });
+  });
+
+  // Procedural Canvas Portraits for Weapons & Bestiary (Zero External Images!)
+  document.querySelectorAll('canvas.portrait').forEach(c => {
+    const ctx = c.getContext('2d');
+    const id = c.dataset.draw;
+    const cx = 34, cy = 34;
+
+    // Subtle backdrop glow
+    const bg = ctx.createRadialGradient(cx, cy, 4, cx, cy, 34);
+    bg.addColorStop(0, '#1a273d'); bg.addColorStop(1, '#080e18');
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, 68, 68);
+
+    ctx.save();
+    ctx.translate(cx, cy);
+
+    if (id === 'w0') {
+      // Arnis Dual Sticks
+      ctx.lineCap = 'round';
+      [[-1, -0.45], [1, 0.45]].forEach(([s, rot]) => {
+        ctx.save(); ctx.rotate(rot);
+        ctx.strokeStyle = '#eab308'; ctx.lineWidth = 5;
+        ctx.beginPath(); ctx.moveTo(-22, s * 6); ctx.lineTo(22, s * 6); ctx.stroke();
+        ctx.strokeStyle = '#292524'; ctx.lineWidth = 5.4;
+        ctx.beginPath(); ctx.moveTo(-20, s * 6); ctx.lineTo(-10, s * 6); ctx.stroke();
+        ctx.restore();
+      });
+    } else if (id === 'w1') {
+      // Slingshot (Tirador)
+      ctx.strokeStyle = '#92400e'; ctx.lineWidth = 5; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(0, 22); ctx.lineTo(0, 2); ctx.lineTo(-14, -14); ctx.moveTo(0, 2); ctx.lineTo(14, -14); ctx.stroke();
+      ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 2.4;
+      ctx.beginPath(); ctx.moveTo(-14, -14); ctx.lineTo(0, -4); ctx.lineTo(14, -14); ctx.stroke();
+      ctx.fillStyle = '#38bdf8'; ctx.beginPath(); ctx.arc(0, -4, 4.5, 0, Math.PI * 2); ctx.fill();
+    } else if (id === 'w2') {
+      // Staff (Tungkod)
+      ctx.rotate(-0.7);
+      ctx.strokeStyle = '#b45309'; ctx.lineWidth = 6; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(-26, 0); ctx.lineTo(24, 0); ctx.stroke();
+      ctx.strokeStyle = '#f5c542'; ctx.lineWidth = 6.4;
+      ctx.beginPath(); ctx.moveTo(14, 0); ctx.lineTo(18, 0); ctx.stroke();
+      ctx.fillStyle = '#2ecc71'; ctx.beginPath(); ctx.arc(25, 0, 5, 0, Math.PI * 2); ctx.fill();
+    } else if (id === 'w3') {
+      // Shield (Kalasag)
+      ctx.fillStyle = '#78350f'; ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(0, -24); ctx.quadraticCurveTo(18, -10, 14, 14); ctx.lineTo(0, 24);
+      ctx.lineTo(-14, 14); ctx.quadraticCurveTo(-18, -10, 0, -24);
+      ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#f5c542'; ctx.beginPath(); ctx.arc(0, 0, 5, 0, Math.PI * 2); ctx.fill();
+    } else if (id === 'w4') {
+      // 1 Stick (Solo Baston)
+      ctx.rotate(-0.65);
+      ctx.strokeStyle = '#451a03'; ctx.lineWidth = 8.5; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(-22, 0); ctx.lineTo(24, 0); ctx.stroke();
+      ctx.strokeStyle = '#dc2626'; ctx.lineWidth = 8.8;
+      ctx.beginPath(); ctx.moveTo(-20, 0); ctx.lineTo(-10, 0); ctx.stroke();
+      ctx.strokeStyle = 'rgba(255,255,255,0.28)'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(-6, -2); ctx.lineTo(20, -2); ctx.stroke();
+    } else if (id === 'e_tiyanak') {
+      ctx.fillStyle = '#4d7c0f'; ctx.beginPath(); ctx.arc(0, 4, 14, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#84cc16'; ctx.beginPath(); ctx.arc(0, -4, 11, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#18181b'; ctx.beginPath(); ctx.arc(0, -7, 11, Math.PI, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#ff2e63'; ctx.beginPath(); ctx.arc(-4, -3, 2.4, 0, Math.PI * 2); ctx.arc(4, -3, 2.4, 0, Math.PI * 2); ctx.fill();
+    } else if (id === 'e_aswang') {
+      ctx.fillStyle = '#2e1065'; ctx.beginPath(); ctx.arc(0, 6, 17, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#cbd5e1'; ctx.beginPath(); ctx.arc(0, -4, 11, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#09090b'; ctx.beginPath(); ctx.arc(0, -7, 11.5, Math.PI, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#ff2e63'; ctx.beginPath(); ctx.arc(-4, -3, 2.5, 0, Math.PI * 2); ctx.arc(4, -3, 2.5, 0, Math.PI * 2); ctx.fill();
+    } else if (id === 'e_manananggal') {
+      ctx.fillStyle = '#4c0519'; ctx.strokeStyle = '#9f1239'; ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(0, 0); ctx.lineTo(-28, -14); ctx.lineTo(-18, 12); ctx.closePath();
+      ctx.moveTo(0, 0); ctx.lineTo(28, -14); ctx.lineTo(18, 12); ctx.closePath();
+      ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#e2e8f0'; ctx.beginPath(); ctx.arc(0, -2, 10, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#09090b'; ctx.beginPath(); ctx.arc(0, -5, 10.5, Math.PI, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#ff2e63'; ctx.beginPath(); ctx.arc(-3.5, -1, 2.2, 0, Math.PI * 2); ctx.arc(3.5, -1, 2.2, 0, Math.PI * 2); ctx.fill();
+    } else if (id === 'e_tikbalang') {
+      ctx.fillStyle = '#7c2d12'; ctx.beginPath(); ctx.ellipse(0, 4, 14, 18, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#431407'; ctx.beginPath(); ctx.moveTo(-10, -10); ctx.lineTo(-16, -24); ctx.lineTo(-3, -14); ctx.moveTo(10, -10); ctx.lineTo(16, -24); ctx.lineTo(3, -14); ctx.fill();
+      ctx.fillStyle = '#f97316'; ctx.beginPath(); ctx.arc(0, -14, 7, Math.PI, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#ff2e63'; ctx.beginPath(); ctx.arc(-5, -4, 2.6, 0, Math.PI * 2); ctx.arc(5, -4, 2.6, 0, Math.PI * 2); ctx.fill();
+    } else if (id === 'e_kapre') {
+      ctx.fillStyle = '#292524'; ctx.beginPath(); ctx.arc(0, 3, 21, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#44403c'; ctx.beginPath(); ctx.arc(0, -2, 14, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = '#78350f'; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(6, 7); ctx.lineTo(22, 11); ctx.stroke();
+      ctx.fillStyle = '#f97316'; ctx.beginPath(); ctx.arc(23, 11.5, 4, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#fb923c'; ctx.beginPath(); ctx.arc(-5, -4, 3, 0, Math.PI * 2); ctx.arc(5, -4, 3, 0, Math.PI * 2); ctx.fill();
+    } else if (id === 'e_bakunawa') {
+      ctx.fillStyle = '#e0f2fe';
+      ctx.beginPath(); ctx.moveTo(-10, -10); ctx.lineTo(-24, -24); ctx.lineTo(-4, -14); ctx.moveTo(10, -10); ctx.lineTo(24, -24); ctx.lineTo(4, -14); ctx.fill();
+      ctx.fillStyle = '#0284c7'; ctx.strokeStyle = '#7dd3fc'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.ellipse(0, 2, 18, 20, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#fde047'; ctx.beginPath(); ctx.arc(-6, -3, 3.6, 0, Math.PI * 2); ctx.arc(6, -3, 3.6, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.restore();
+  });
+})();
+</script>
+</body>
+</html>
